@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/comments")
+@RequestMapping("/api/comment")
 @RequiredArgsConstructor
 public class CommentController {
     private final ICommentService commentService;
@@ -34,15 +34,23 @@ public class CommentController {
     @PutMapping("/answer")
     public ResponseEntity<ResponseMessage> answerComment(@Valid @RequestBody AnswerCommentDTO answerCommentDTO,
     @AuthenticationPrincipal UserDetailsImpl userDetails
-    ) throws  Exception{
+    ){
         UUID userId = userDetails.getId();
         commentService.AnswerComment(answerCommentDTO, userId);
         return ResponseEntity.ok(new ResponseMessage(true, "Comment created"));
     }
 
     @GetMapping("/business-comments/{id}?page={page}")
-    public ResponseEntity<List<GetCommentDTO>> getBusinessComments(@PathVariable UUID id, @PathVariable int page) throws  Exception{
+    public ResponseEntity<List<GetCommentDTO>> getBusinessComments(@PathVariable UUID id, @PathVariable int page){
         List<GetCommentDTO> businessComments =  commentService.GetBusinessComments(id, page);
         return ResponseEntity.ok(businessComments);
+    }
+
+    @GetMapping("/user-comments?page={page}")
+    public ResponseEntity<List<GetCommentDTO>> getUserLatestComments(
+            @PathVariable int page, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        UUID userId = userDetails.getId();
+        List<GetCommentDTO> userComments =  commentService.GetUserLatestComments(userId, page);
+        return ResponseEntity.ok(userComments);
     }
 }

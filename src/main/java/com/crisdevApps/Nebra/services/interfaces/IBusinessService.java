@@ -23,15 +23,15 @@ public interface IBusinessService {
 
     void DeleteBusiness(UUID businessId, UUID userId) ;
 
-    void StoreBusinessImages(List<MultipartFile> photos, UUID businessId, UUID userId);
+    List<String> StoreBusinessImages(List<MultipartFile> photos, UUID userId);
 
     List<GetBusinessDTO> SearchBusiness(String search, int page);
 
-    List<GetBusinessDTO> GetUserArchivedBusiness(int page, UUID userId);
+    List<GetBusinessDTO> GetUserArchivedBusiness(UUID userId);
 
     List<GetBusinessDTO> FilterBusinessByCategory(BusinessCategory businessCategory, int page);
 
-    List<GetBusinessDTO> GetUserBusiness(UUID userId, int page);
+    List<GetBusinessDTO> GetUserBusiness(UUID userId);
 
     void ArchiveBusiness(UUID businessId, UUID userId);
 

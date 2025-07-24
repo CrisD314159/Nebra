@@ -33,15 +33,14 @@ public class BusinessController {
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseMessage(true, "Business Created"));
     }
 
-    @PostMapping("/uploadBusinessPhotos/{id}")
-    public ResponseEntity<ResponseMessage> uploadBusinessPhotos(
-            @RequestBody List<MultipartFile> photos,
-            @PathVariable UUID id,
+    @PostMapping("/uploadBusinessPhotos")
+    public ResponseEntity<List<String>> uploadBusinessPhotos(
+            @RequestParam("files") List<MultipartFile> photos,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ){
         UUID userId = userDetails.getId();
-        businessService.StoreBusinessImages(photos, id, userId);
-        return ResponseEntity.ok(new ResponseMessage(true, "Business photos stored"));
+        List<String> businessImages = businessService.StoreBusinessImages(photos, userId);
+        return ResponseEntity.ok(businessImages);
     }
 
     @PutMapping()
@@ -91,13 +90,12 @@ public class BusinessController {
         return ResponseEntity.ok(businessDTOS);
     }
 
-    @GetMapping("/archived?page={page}")
+    @GetMapping("/archived")
     public ResponseEntity<List<GetBusinessDTO>> getUserArchived(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @PathVariable int page
+            @AuthenticationPrincipal UserDetailsImpl userDetails
     ){
         UUID userId = userDetails.getId();
-        List<GetBusinessDTO> businessDTOS =  businessService.GetUserArchivedBusiness(page, userId);
+        List<GetBusinessDTO> businessDTOS =  businessService.GetUserArchivedBusiness(userId);
         return ResponseEntity.ok(businessDTOS);
     }
 
@@ -119,13 +117,12 @@ public class BusinessController {
         return ResponseEntity.ok(businessDTOS);
     }
 
-    @GetMapping("/user?page={page}")
+    @GetMapping("/user")
     public ResponseEntity<List<GetBusinessDTO>> getUserBusiness(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @PathVariable int page
+            @AuthenticationPrincipal UserDetailsImpl userDetails
     ){
         UUID userId = userDetails.getId();
-        List<GetBusinessDTO> businessDTOS =  businessService.GetUserBusiness(userId, page);
+        List<GetBusinessDTO> businessDTOS =  businessService.GetUserBusiness(userId);
         return ResponseEntity.ok(businessDTOS);
     }
 

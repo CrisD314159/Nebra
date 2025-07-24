@@ -36,6 +36,9 @@ public interface BusinessRepository extends JpaRepository<Business, UUID> {
 
     Optional<Business> findByIdAndBusinessState(UUID id, BusinessState state);
 
+
+    int countAllByBusinessStateAndUserOwner(BusinessState businessState, User userOwner);
+
     @Query(value = """
     SELECT * FROM business
     WHERE ST_DistanceSphere(location, ST_MakePoint(:lng, :lat)) < :maxDistance

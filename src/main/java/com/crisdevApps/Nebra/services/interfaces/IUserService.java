@@ -5,6 +5,7 @@ import com.crisdevApps.Nebra.dto.inputDto.CreateUserDTO;
 import com.crisdevApps.Nebra.dto.outputDto.GetUserProfileDTO;
 import com.crisdevApps.Nebra.model.User;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
@@ -13,6 +14,8 @@ import java.util.UUID;
 public interface IUserService{
 
     void SignUp(CreateUserDTO createUserDTO);
+
+    String UploadUserProfilePicture(MultipartFile profilePicture);
 
     void EditProfile(UpdateUserDTO updateUserDTO);
 

@@ -9,7 +9,7 @@ import org.hibernate.validator.constraints.Length;
 import java.util.UUID;
 
 public record CreateCommentDTO(
-       @NotEmpty UUID id,
+       @NotEmpty UUID businessId,
        @NotBlank String title,
        @NotBlank @Length(max = 200) String content,
        @PositiveOrZero @Max(5) int score

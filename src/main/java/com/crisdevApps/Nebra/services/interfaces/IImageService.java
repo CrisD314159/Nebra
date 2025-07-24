@@ -15,4 +15,5 @@ public interface IImageService {
     List<Image> UploadSeveralImages(List<MultipartFile> images);
     void DeleteSeveral(List<Image> images);
     void DeleteImage(String imageId);
+    Image GetImage(String image);
 }

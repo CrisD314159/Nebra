@@ -22,6 +22,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
@@ -49,7 +50,13 @@ public class UserService implements IUserService {
         );
 
 
-        Image profilePicture = imageService.UploadImage(createUserDTO.profilePicture());
+        Image profilePicture;
+
+        if(createUserDTO.profilePicture().isEmpty()){
+            profilePicture = imageService.GetImage("nebraImages/krzunab8xoap7ox1baso");
+        }else{
+            profilePicture = imageService.GetImage(createUserDTO.profilePicture());
+        }
 
         User user = User.builder()
                 .password(passwordEncoder.encode(createUserDTO.password()))
@@ -76,7 +83,18 @@ public class UserService implements IUserService {
                 user.getName(),
                 verificationCode,
                 ""
-        ), "templates/generalEmailTemplate.html", true);
+        ), "templates/verificationEmail.html", true);
+    }
+
+    @Override
+    public String UploadUserProfilePicture(MultipartFile profilePicture) {
+        if(profilePicture == null){
+            throw new ValidationException("No image provided");
+        }
+
+        Image uploadedImage = imageService.UploadImage(profilePicture);
+
+        return uploadedImage.getId();
     }
 
 
@@ -92,11 +110,11 @@ public class UserService implements IUserService {
 
         imageService.DeleteImage(user.getProfilePicture().getId());
 
-        Image newImage = imageService.UploadImage(updateUserDTO.profilePicture());
+        Image profilePic = imageService.GetImage(updateUserDTO.profilePicture());
 
         user.setName(updateUserDTO.name());
         user.setLocation(updateUserDTO.location());
-        user.setProfilePicture(newImage);
+        user.setProfilePicture(profilePic);
 
         userRepository.save(user);
 

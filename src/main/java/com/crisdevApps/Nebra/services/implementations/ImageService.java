@@ -64,4 +64,15 @@ public class ImageService implements IImageService {
         }
 
     }
+
+    @Override
+    public Image GetImage(String id) {
+        Optional<Image> imageOptional = imageRepository.findById(id);
+
+        if(imageOptional.isEmpty()){
+            throw new EntityNotFoundException("Image not found");
+        }
+
+        return imageOptional.get();
+    }
 }

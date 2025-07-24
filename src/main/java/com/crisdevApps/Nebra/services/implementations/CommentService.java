@@ -12,7 +12,6 @@ import com.crisdevApps.Nebra.model.Comment;
 import com.crisdevApps.Nebra.model.User;
 import com.crisdevApps.Nebra.model.enums.BusinessState;
 import com.crisdevApps.Nebra.repositories.BusinessRepository;
-import com.crisdevApps.Nebra.services.interfaces.IBusinessService;
 import com.crisdevApps.Nebra.services.interfaces.ICommentService;
 import com.crisdevApps.Nebra.repositories.CommentRepository;
 import com.crisdevApps.Nebra.services.interfaces.IUserService;
@@ -40,7 +39,7 @@ public class CommentService implements ICommentService {
     private final BusinessRepository businessRepository;
     @Override
     public void CreateComment(CreateCommentDTO createCommentDTO, UUID authorId) {
-        Business business = GetValidBusiness(createCommentDTO.id());
+        Business business = GetValidBusiness(createCommentDTO.businessId());
         User user = userService.FindValidUserById(authorId);
 
         if(business.getUserOwner().getId().equals(user.getId()))
@@ -109,6 +108,16 @@ public class CommentService implements ICommentService {
             score = score + scoreItem;
         }
         return (score/scoreList.size());
+    }
+
+    @Override
+    public List<GetCommentDTO> GetUserLatestComments(UUID userId, int page) {
+        User user = userService.FindValidUserById(userId);
+        Pageable pageable = PageRequest.of(page, 15);
+        Page<Comment> commentPage = commentRepository.
+                findAllByBusiness_UserOwnerAndAnswered(user, false, pageable);
+
+        return commentPage.stream().map(commentMapper::toDto).toList();
     }
 
     public Business GetValidBusiness(UUID businessId) {

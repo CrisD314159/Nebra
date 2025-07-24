@@ -10,7 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 public record CreateUserDTO(
         @NotBlank @Length(max = 50) String name,
 
-        @NotBlank MultipartFile profilePicture,
+        String profilePicture,
 
 
        @NotBlank @Email String email,
@@ -22,7 +22,7 @@ public record CreateUserDTO(
         )
         String password,
 
-       @NotBlank String location
+       @NotBlank @Length(max = 35) String location
 
 ) {
 

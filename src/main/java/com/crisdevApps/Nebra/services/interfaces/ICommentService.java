@@ -18,4 +18,6 @@ public interface ICommentService {
 
     int CalculateBusinessAverageScore(UUID businessId);
 
+    List<GetCommentDTO> GetUserLatestComments(UUID userId, int page);
+
 }

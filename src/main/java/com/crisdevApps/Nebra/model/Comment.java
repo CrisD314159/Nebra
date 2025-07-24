@@ -27,6 +27,7 @@ public class Comment implements Serializable {
     private User author;
     @ManyToOne
     private Business business;
+    private boolean answered;
     private String answer;
 
 }

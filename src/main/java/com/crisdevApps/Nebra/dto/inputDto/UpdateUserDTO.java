@@ -3,6 +3,7 @@ package com.crisdevApps.Nebra.dto.inputDto;
 import com.crisdevApps.Nebra.model.Image;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
@@ -10,11 +11,11 @@ import java.util.UUID;
 public record UpdateUserDTO(
         @NotEmpty UUID id,
 
-       @NotBlank String name,
+       @NotBlank @Length(max = 50) String name,
 
-        MultipartFile profilePicture,
+        String profilePicture,
 
-       @NotBlank String location
+       @NotBlank @Length(max = 35) String location
 ) {
 
 

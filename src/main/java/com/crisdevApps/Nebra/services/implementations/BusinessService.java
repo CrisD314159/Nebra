@@ -65,7 +65,10 @@ public class BusinessService implements IBusinessService {
 
     @Override
     public void CreateBusiness(CreateBusinessDTO createBusinessDTO, UUID userId){
+
         User user = userService.FindValidUserById(userId);
+        if(!canUserCreateMoreBusiness(user))
+            throw new ValidationException("You've reached your maximum amount of business");
         if (businessRepository.existsByNameAndUserOwner(createBusinessDTO.name(), user)){
             throw new ValidationException("You already have a business with that name");
         }
@@ -74,9 +77,11 @@ public class BusinessService implements IBusinessService {
         Point businessLocation = geometryFactory.createPoint(new
                 Coordinate(createBusinessDTO.latitude(), createBusinessDTO.longitude()));
 
+        List<Image> imagesList = createBusinessDTO.imagesIds().stream().map(imageService::GetImage).toList();
+
         Business business = Business.builder()
                 .comments(new ArrayList<>())
-                .images(new ArrayList<>())
+                .images(imagesList)
                 .revisionsList(new ArrayList<>())
                 .scheduleList(new ArrayList<>())
                 .businessState(BusinessState.ACTIVE)
@@ -93,21 +98,26 @@ public class BusinessService implements IBusinessService {
 
     }
 
+    private boolean canUserCreateMoreBusiness(User user){
+        int availableBusinesses = businessRepository.
+                countAllByBusinessStateAndUserOwner(BusinessState.ACTIVE, user);
+        int archivedBusinesses = businessRepository.
+                countAllByBusinessStateAndUserOwner(BusinessState.ARCHIVED, user);
+
+        int totalBusinesses = availableBusinesses + archivedBusinesses;
+        return totalBusinesses <= 15;
+    }
+
     @Override
-    public void StoreBusinessImages(List<MultipartFile> photos, UUID businessId, UUID userId) {
-        Business business = GetValidBusiness(businessId);
+    public List<String> StoreBusinessImages(List<MultipartFile> photos, UUID userId) {
 
-        if(!business.getUserOwner().getId().equals(userId))
-            throw new ValidationException("You are not his business owner");
-
-        if(!business.getImages().isEmpty()){
-            imageService.DeleteSeveral(business.getImages());
+        if(photos.size() > 5){
+            throw new ValidationException("You can just upload maximum 5 images per business");
         }
 
         List<Image> imagesUploaded = imageService.UploadSeveralImages(photos);
-        business.setImages(imagesUploaded);
-        businessRepository.save(business);
 
+        return imagesUploaded.stream().map(Image::getId).toList();
     }
 
 
@@ -119,20 +129,27 @@ public class BusinessService implements IBusinessService {
                 user
         );
 
-        GeometryFactory geometryFactory = new GeometryFactory();
-        Point businessLocation = geometryFactory.createPoint(new
-                Coordinate(updateBusinessDTO.latitude(), updateBusinessDTO.longitude()));
+
         if (businessOptional.isEmpty()){
             throw new EntityNotFoundException("Business not found");
         }
 
+        GeometryFactory geometryFactory = new GeometryFactory();
+        Point businessLocation = geometryFactory.createPoint(new
+                Coordinate(updateBusinessDTO.latitude(), updateBusinessDTO.longitude()));
+
         Business business = businessOptional.get();
+
+        imageService.DeleteSeveral(business.getImages());
+
+        List<Image> imagesList = updateBusinessDTO.imagesIds().stream().map(imageService::GetImage).toList();
+
         business.setScheduleList(updateBusinessDTO.schedules());
         business.setLocation(businessLocation);
         business.setName(updateBusinessDTO.name());
         business.setDescription(updateBusinessDTO.description());
         business.setPhoneContact(updateBusinessDTO.phoneContact());
-        business.setImages(updateBusinessDTO.images());
+        business.setImages(imagesList);
 
         businessRepository.save(business);
     }
@@ -170,8 +187,8 @@ public class BusinessService implements IBusinessService {
     }
 
     @Override
-    public List<GetBusinessDTO> GetUserArchivedBusiness(int page, UUID userId){
-        Pageable pageable = PageRequest.of(page, 10);
+    public List<GetBusinessDTO> GetUserArchivedBusiness(UUID userId){
+        Pageable pageable = PageRequest.of(0, 15);
         Page<Business> businessPage = businessRepository.findByBusinessStateAndUserOwner_Id(BusinessState.ARCHIVED, userId, pageable);
 
         return businessPage.stream().map(business -> {
@@ -194,9 +211,9 @@ public class BusinessService implements IBusinessService {
     }
 
     @Override
-    public List<GetBusinessDTO> GetUserBusiness(UUID userId, int page){
+    public List<GetBusinessDTO> GetUserBusiness(UUID userId){
         User user = userService.FindValidUserById(userId);
-        Pageable pageable = PageRequest.of(page, 10);
+        Pageable pageable = PageRequest.of(0, 15);
         Page<Business> businessPage = businessRepository.findByUserOwnerAndBusinessState(user, BusinessState.ACTIVE,
                 pageable);
 
