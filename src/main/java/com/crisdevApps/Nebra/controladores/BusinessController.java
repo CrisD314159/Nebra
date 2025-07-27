@@ -50,7 +50,7 @@ public class BusinessController {
             ){
         UUID userId = userDetails.getId();
         businessService.UpdateBusiness(updateBusinessDTO, userId);
-        return ResponseEntity.ok(new ResponseMessage(true, "Business Created"));
+        return ResponseEntity.ok(new ResponseMessage(true, "Business Updated"));
     }
 
     @PutMapping("/archive/{id}")
@@ -99,19 +99,19 @@ public class BusinessController {
         return ResponseEntity.ok(businessDTOS);
     }
 
-    @GetMapping("/category?page={page}&category={category}")
+    @GetMapping("/category")
     public ResponseEntity<List<GetBusinessDTO>> getBusinessByCategory(
-            @PathVariable int page,
-            @PathVariable BusinessCategory category
+            @RequestParam int page,
+            @RequestParam BusinessCategory category
     ){
         List<GetBusinessDTO> businessDTOS =  businessService.FilterBusinessByCategory(category, page);
         return ResponseEntity.ok(businessDTOS);
     }
 
-    @GetMapping("/near?latitude={latitude}&longitude={longitude}")
+    @GetMapping("/near")
     public ResponseEntity<List<GetBusinessDTO>> getNearBusiness(
-            @PathVariable double latitude,
-            @PathVariable double longitude
+            @RequestParam double latitude,
+            @RequestParam double longitude
     ){
         List<GetBusinessDTO> businessDTOS =  businessService.GetNearBusiness(latitude, longitude);
         return ResponseEntity.ok(businessDTOS);

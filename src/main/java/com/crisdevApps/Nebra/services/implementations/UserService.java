@@ -108,8 +108,6 @@ public class UserService implements IUserService {
     public void EditProfile(UpdateUserDTO updateUserDTO) {
         User user = FindValidUserById(updateUserDTO.id());
 
-        imageService.DeleteImage(user.getProfilePicture().getId());
-
         Image profilePic = imageService.GetImage(updateUserDTO.profilePicture());
 
         user.setName(updateUserDTO.name());

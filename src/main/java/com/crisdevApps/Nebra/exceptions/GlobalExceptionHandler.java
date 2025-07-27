@@ -19,18 +19,18 @@ import java.util.List;
 public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorMessage<String>> generalException(Exception e){
-        return ResponseEntity.internalServerError().body( new ErrorMessage<>(true, e.getMessage())
+        return ResponseEntity.internalServerError().body( new ErrorMessage<>(false, e.getMessage())
         );
     }
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorMessage<List<ValidationDTO>>> validationException(
+    public ResponseEntity<ErrorMessage<String>> validationException(
             MethodArgumentNotValidException ex ) {
-        List<ValidationDTO> errores = new ArrayList<>();
+        StringBuilder errors = new StringBuilder();
         BindingResult results = ex.getBindingResult();
         for (FieldError e: results.getFieldErrors()) {
-            errores.add( new ValidationDTO(e.getField(), e.getDefaultMessage()) );
+            errors.append("\n ").append(e.getField()).append(e.getDefaultMessage());
         }
-        return ResponseEntity.badRequest().body( new ErrorMessage<>(true, errores) );
+        return ResponseEntity.badRequest().body( new ErrorMessage<>(false, errors.toString()) );
     }
 
     @ExceptionHandler(EntityNotFoundException.class)

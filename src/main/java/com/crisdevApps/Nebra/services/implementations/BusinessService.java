@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -77,7 +78,9 @@ public class BusinessService implements IBusinessService {
         Point businessLocation = geometryFactory.createPoint(new
                 Coordinate(createBusinessDTO.latitude(), createBusinessDTO.longitude()));
 
-        List<Image> imagesList = createBusinessDTO.imagesIds().stream().map(imageService::GetImage).toList();
+        List<Image> imagesList = createBusinessDTO.imagesIds().stream()
+                .map(imageService::GetImage)
+                .collect(Collectors.toCollection(ArrayList::new));
 
         Business business = Business.builder()
                 .comments(new ArrayList<>())
@@ -122,6 +125,7 @@ public class BusinessService implements IBusinessService {
 
 
     @Override
+    @Transactional
     public void UpdateBusiness(UpdateBusinessDTO updateBusinessDTO, UUID userId) {
         User user = userService.FindValidUserById(userId);
         Optional<Business> businessOptional = businessRepository.findByIdAndUserOwner(
@@ -140,18 +144,25 @@ public class BusinessService implements IBusinessService {
 
         Business business = businessOptional.get();
 
-        imageService.DeleteSeveral(business.getImages());
 
-        List<Image> imagesList = updateBusinessDTO.imagesIds().stream().map(imageService::GetImage).toList();
+        List<Image> imagesList = updateBusinessDTO.imagesIds().stream()
+                .map(imageService::GetImage)
+                .collect(Collectors.toCollection(ArrayList::new));
 
-        business.setScheduleList(updateBusinessDTO.schedules());
         business.setLocation(businessLocation);
+        business.setCategory(updateBusinessDTO.category());
         business.setName(updateBusinessDTO.name());
         business.setDescription(updateBusinessDTO.description());
         business.setPhoneContact(updateBusinessDTO.phoneContact());
         business.setImages(imagesList);
 
-        businessRepository.save(business);
+
+        try {
+            businessRepository.save(business);
+        } catch (Exception e) {
+            e.printStackTrace(); // Esto es mejor para depurar que e.getMessage()
+            throw e; // relanza para que Spring maneje la transacción correctamente
+        }
     }
 
     @Override

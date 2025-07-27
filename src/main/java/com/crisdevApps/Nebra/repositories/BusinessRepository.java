@@ -42,22 +42,22 @@ public interface BusinessRepository extends JpaRepository<Business, UUID> {
     @Query(value = """
     SELECT * FROM business
     WHERE ST_DistanceSphere(location, ST_MakePoint(:lng, :lat)) < :maxDistance
+    ORDER BY ST_DistanceSphere(location, ST_MakePoint(:lng, :lat))
     LIMIT 20
 """, nativeQuery = true)
     List<Business> findNearbyBusinesses(
             @Param("lat") double lat,
             @Param("lng") double lng,
-            @Param("maxDistance") double maxDistance
+            @Param("maxDistance") double maxDistance  // This should be in METERS
     );
 
     @Query(value = """
-    SELECT b.*, AVG(c.score) AS average_score
+    SELECT DISTINCT b.*, AVG(c.score) as avg_score
     FROM business b
-    JOIN comment c ON b.id = c.business_id
+    LEFT JOIN comment c ON b.id = c.business_id AND c.score IS NOT NULL
     GROUP BY b.id
-    ORDER BY average_score DESC
+    ORDER BY avg_score DESC NULLS LAST
     LIMIT 20
 """, nativeQuery = true)
     List<Business> findTopBusinessesByScore();
-
 }

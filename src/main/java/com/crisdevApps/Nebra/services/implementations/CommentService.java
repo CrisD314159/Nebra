@@ -104,6 +104,9 @@ public class CommentService implements ICommentService {
     public int CalculateBusinessAverageScore(UUID businessId) {
         List<Integer> scoreList = GetBusinessCommentsScoreList(businessId);
         int score = 0;
+
+        if(scoreList.isEmpty()) return 0;
+
         for (Integer scoreItem: scoreList){
             score = score + scoreItem;
         }

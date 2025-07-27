@@ -43,7 +43,7 @@ public class Business implements Serializable {
     @ManyToOne(fetch = FetchType.EAGER)
     private User userOwner;
 
-    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "business", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<Comment> comments;
 
     @OneToMany(cascade = CascadeType.ALL)
