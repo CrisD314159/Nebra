@@ -105,14 +105,17 @@ public class UserService implements IUserService {
 
 
     @Override
-    public void EditProfile(UpdateUserDTO updateUserDTO) {
-        User user = FindValidUserById(updateUserDTO.id());
+    public void EditProfile(UpdateUserDTO updateUserDTO, UUID userId) {
+        User user = FindValidUserById(userId);
 
-        Image profilePic = imageService.GetImage(updateUserDTO.profilePicture());
+
+        if(!updateUserDTO.profilePicture().isBlank()){
+            Image profilePic = imageService.GetImage(updateUserDTO.profilePicture());
+            user.setProfilePicture(profilePic);
+        }
 
         user.setName(updateUserDTO.name());
         user.setLocation(updateUserDTO.location());
-        user.setProfilePicture(profilePic);
 
         userRepository.save(user);
 

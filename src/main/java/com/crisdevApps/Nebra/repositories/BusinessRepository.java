@@ -28,7 +28,7 @@ public interface BusinessRepository extends JpaRepository<Business, UUID> {
     Page<Business> findByBusinessStateAndUserOwner_Id(BusinessState businessState, UUID userOwnerId, Pageable pageable);
 
 
-    Page<Business> findByNameIsLikeAndBusinessState(String name, BusinessState state, Pageable pageable);
+    Page<Business> findAllByNameContainingIgnoreCaseAndBusinessState(String name, BusinessState businessState, Pageable pageable);
 
 
     Page<Business> findByUserOwnerAndBusinessState(User owner, BusinessState state, Pageable pageable);
@@ -55,6 +55,7 @@ public interface BusinessRepository extends JpaRepository<Business, UUID> {
     SELECT DISTINCT b.*, AVG(c.score) as avg_score
     FROM business b
     LEFT JOIN comment c ON b.id = c.business_id AND c.score IS NOT NULL
+    WHERE b.business_state = 0
     GROUP BY b.id
     ORDER BY avg_score DESC NULLS LAST
     LIMIT 20

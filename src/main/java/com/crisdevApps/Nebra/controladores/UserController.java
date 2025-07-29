@@ -37,8 +37,12 @@ public class UserController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<ResponseMessage> updateUser(@Valid @RequestBody UpdateUserDTO updateUserDTO){
-        userService.EditProfile(updateUserDTO);
+    public ResponseEntity<ResponseMessage> updateUser(
+            @Valid @RequestBody UpdateUserDTO updateUserDTO,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+            ){
+        UUID userId = userDetails.getId();
+        userService.EditProfile(updateUserDTO, userId);
         return ResponseEntity.ok(new ResponseMessage(true, "User successfully updated"));
     }
 

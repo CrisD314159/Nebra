@@ -17,7 +17,7 @@ public interface IUserService{
 
     String UploadUserProfilePicture(MultipartFile profilePicture);
 
-    void EditProfile(UpdateUserDTO updateUserDTO);
+    void EditProfile(UpdateUserDTO updateUserDTO, UUID userId);
 
 
     GetUserProfileDTO GetUserProfile(UUID userId);

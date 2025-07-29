@@ -40,7 +40,7 @@ public class WebSecurityConfig {
     public SecurityFilterChain securityFilterChain (HttpSecurity security) throws Exception {
             security.csrf(AbstractHttpConfigurer::disable)
                     .authorizeHttpRequests(auth ->{
-                        auth.requestMatchers("api/user/create", "api/user/uploadProfilePicture", "api/comment/business-comments/",
+                        auth.requestMatchers("api/user/create", "api/user/uploadProfilePicture", "api/comment/business-comments/**",
                                         "api/business/search", "api/business/category", "api/business/near",
                                         "api/auth/login", "api/auth/logout", "api/auth/refresh",
                                         "api/account/changePassword", "api/account/sendRecoveryLink", "api/account/verifyAccount")

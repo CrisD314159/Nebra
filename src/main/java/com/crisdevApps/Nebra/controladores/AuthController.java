@@ -1,6 +1,7 @@
 package com.crisdevApps.Nebra.controladores;
 
 import com.crisdevApps.Nebra.dto.inputDto.LoginDTO;
+import com.crisdevApps.Nebra.dto.inputDto.RefreshTokenDTO;
 import com.crisdevApps.Nebra.dto.outputDto.ErrorMessage;
 import com.crisdevApps.Nebra.dto.outputDto.ResponseMessage;
 import com.crisdevApps.Nebra.dto.outputDto.TokenDTO;
@@ -24,14 +25,14 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<ResponseMessage> logout(@RequestBody String refreshToken){
-        authService.Logout(refreshToken);
+    public ResponseEntity<ResponseMessage> logout(@RequestBody RefreshTokenDTO refreshToken){
+        authService.Logout(refreshToken.refresh());
         return ResponseEntity.ok().body(new ResponseMessage(true, "Logged oud successfully"));
     }
 
     @PutMapping("/refresh")
-    public ResponseEntity<TokenDTO> refreshToken(@RequestBody String refresh){
-        TokenDTO tokens = authService.RefreshToken(refresh);
+    public ResponseEntity<TokenDTO> refreshToken(@RequestBody RefreshTokenDTO refresh){
+        TokenDTO tokens = authService.RefreshToken(refresh.refresh());
         return ResponseEntity.ok(tokens);
     }
 

@@ -88,6 +88,9 @@ public class AccountService implements IAccountService {
 
         User user = userOptional.get();
 
+        if(user.getUserState() == UserState.ACTIVE)
+            throw new ValidationException("User is already verified");
+
         if(!user.getVerificationCode().equals(verifyAccountDTO.code()))
             throw new ValidationException("Invalid Email or code");
 

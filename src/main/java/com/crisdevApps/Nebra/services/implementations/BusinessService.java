@@ -188,7 +188,7 @@ public class BusinessService implements IBusinessService {
     @Override
     public List<GetBusinessDTO> SearchBusiness(String search, int page) {
         Pageable pageable = PageRequest.of(page, 10);
-        Page<Business> businessPage = businessRepository.findByNameIsLikeAndBusinessState(search, BusinessState.ACTIVE, pageable);
+        Page<Business> businessPage = businessRepository.findAllByNameContainingIgnoreCaseAndBusinessState(search, BusinessState.ACTIVE, pageable);
 
         return businessPage.stream().map(business -> {
             int score = commentService.CalculateBusinessAverageScore(business.getId());

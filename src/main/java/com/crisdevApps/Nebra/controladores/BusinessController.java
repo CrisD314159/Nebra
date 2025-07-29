@@ -84,8 +84,8 @@ public class BusinessController {
     }
 
 
-    @GetMapping("/search?name={name}&page={page}")
-    public ResponseEntity<List<GetBusinessDTO>> searchBusiness(@PathVariable int page, @PathVariable String name){
+    @GetMapping("/search")
+    public ResponseEntity<List<GetBusinessDTO>> searchBusiness(@RequestParam int page, @RequestParam String name){
         List<GetBusinessDTO> businessDTOS = businessService.SearchBusiness(name, page);
         return ResponseEntity.ok(businessDTOS);
     }

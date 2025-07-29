@@ -41,6 +41,10 @@ public class ReportService implements IReportService {
     public void CreateReport(CreateReportDTO createReportDTO, UUID authorId) {
         Business business = businessService.GetValidBusiness(createReportDTO.businessId());
         User user = userService.FindValidUserById(authorId);
+
+        if(authorId.equals(business.getId()))
+            throw new ValidationException("You can't report your own business");
+
         Report report = Report.builder()
                 .reportState(ReportState.PENDING)
                 .answer("")
@@ -59,7 +63,7 @@ public class ReportService implements IReportService {
         if(reportBusiness.getBusinessState() != BusinessState.ACTIVE)
             throw new ValidationException("Business not found");
 
-        reportBusiness.setBusinessState(BusinessState.ACTIVE);
+        reportBusiness.setBusinessState(BusinessState.INACTIVE);
         report.setReportState(ReportState.ACCEPTED);
 
         reportRepository.save(report);

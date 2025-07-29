@@ -18,7 +18,9 @@ public record GetUserProfileDTO(
 
         String location,
 
-        int businessAmount
+        int businessAmount,
+
+        boolean isThirdPartyUser
 ) {
 
 }

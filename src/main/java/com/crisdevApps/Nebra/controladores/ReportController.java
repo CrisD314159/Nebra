@@ -52,26 +52,26 @@ public class ReportController {
     )  {
         UUID userId = userDetails.getId();
         reportService.RejectReport(id, userId);
-        return ResponseEntity.ok(new ResponseMessage(true, "Report accepted"));
+        return ResponseEntity.ok(new ResponseMessage(true, "Report rejected"));
     }
 
     @PreAuthorize("hasRole('MODERATOR')")
-    @GetMapping("/pending?page={page}")
-    public ResponseEntity<List<GetReportDTO>> getPendingReports(@PathVariable int page) throws Exception {
+    @GetMapping("/pending")
+    public ResponseEntity<List<GetReportDTO>> getPendingReports(@RequestParam int page) throws Exception {
         List<GetReportDTO> reportDTOS = reportService.GetPendingReports(page);
         return ResponseEntity.ok(reportDTOS);
     }
 
     @PreAuthorize("hasRole('MODERATOR')")
-    @GetMapping("/accepted?page={page}")
-    public ResponseEntity<List<GetReportDTO>> getAcceptedReports(@PathVariable int page) throws Exception {
+    @GetMapping("/accepted")
+    public ResponseEntity<List<GetReportDTO>> getAcceptedReports(@RequestParam int page) throws Exception {
         List<GetReportDTO> reportDTOS = reportService.GetAcceptedReports(page);
         return ResponseEntity.ok(reportDTOS);
     }
 
     @PreAuthorize("hasRole('MODERATOR')")
-    @GetMapping("/rejected?page={page}")
-    public ResponseEntity<List<GetReportDTO>> getRejectedReports(@PathVariable int page) throws Exception {
+    @GetMapping("/rejected")
+    public ResponseEntity<List<GetReportDTO>> getRejectedReports(@RequestParam int page) throws Exception {
         List<GetReportDTO> reportDTOS = reportService.GetRejectedReports(page);
         return ResponseEntity.ok(reportDTOS);
     }

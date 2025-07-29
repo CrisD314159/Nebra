@@ -80,7 +80,12 @@ public class CommentService implements ICommentService {
         }
 
         Comment comment = comentarioOptional.get();
+
+        if(!comment.getBusiness().getUserOwner().getId().equals(userId))
+            throw new ValidationException("You can't answer this comment");
+
         comment.setAnswer(answerCommentDTO.answer());
+        comment.setAnswered(true);
 
         commentRepository.save(comment);
     }
