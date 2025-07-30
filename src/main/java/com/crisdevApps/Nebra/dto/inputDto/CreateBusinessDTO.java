@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public record CreateBusinessDTO(
-        @NotBlank @Length(max = 400) String description,
+        @NotBlank @Length(max = 250) String description,
         @NotBlank @Length(max = 200) String name,
         @NotEmpty @Length(max = 15) String phoneContact,
         @NotEmpty List<String> imagesIds,

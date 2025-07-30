@@ -15,7 +15,7 @@ import java.util.UUID;
 public record UpdateBusinessDTO(
 
         @NotNull UUID id,
-        @NotBlank @Length(max = 400) String description,
+        @NotBlank @Length(max = 250) String description,
         @NotBlank @Length(max = 200) String name,
         @NotEmpty @Length(max = 15) String phoneContact,
         @NotEmpty List<String> imagesIds,

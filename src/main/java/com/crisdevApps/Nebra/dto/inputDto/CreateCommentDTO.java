@@ -7,7 +7,7 @@ import java.util.UUID;
 
 public record CreateCommentDTO(
        @NotNull UUID businessId,
-       @NotBlank String title,
+       @NotBlank @Length(max = 100) String title,
        @NotBlank @Length(max = 200) String content,
        @PositiveOrZero @Max(5) int score
 ) {
