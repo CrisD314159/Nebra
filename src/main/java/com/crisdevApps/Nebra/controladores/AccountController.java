@@ -1,6 +1,7 @@
 package com.crisdevApps.Nebra.controladores;
 
 import com.crisdevApps.Nebra.dto.inputDto.ChangePasswordDTO;
+import com.crisdevApps.Nebra.dto.inputDto.SendRecoveryLinkDTO;
 import com.crisdevApps.Nebra.dto.inputDto.VerifyAccountDTO;
 import com.crisdevApps.Nebra.dto.outputDto.ResponseMessage;
 import com.crisdevApps.Nebra.security.UserDetailsImpl;
@@ -34,8 +35,8 @@ public class AccountController {
     }
 
     @PostMapping("/sendRecoveryLink")
-    public ResponseEntity<ResponseMessage> sendRecoveryLink( @RequestBody String email){
-        accountService.SendRecoveryLink(email);
+    public ResponseEntity<ResponseMessage> sendRecoveryLink(@Valid @RequestBody SendRecoveryLinkDTO sendRecoveryLinkDTO){
+        accountService.SendRecoveryLink(sendRecoveryLinkDTO.email());
         return ResponseEntity.ok(new ResponseMessage(true, "E-mail sent"));
     }
 

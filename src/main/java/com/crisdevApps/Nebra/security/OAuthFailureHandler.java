@@ -20,7 +20,7 @@ public class OAuthFailureHandler implements AuthenticationFailureHandler {
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-        var frontRedirect = String.format("%s/login/error?=%s", frontEndpoint, exception.getMessage());
+        var frontRedirect = String.format("%s/login/error?error=%s", frontEndpoint, exception.getMessage());
         response.sendRedirect(frontRedirect);
     }
 }

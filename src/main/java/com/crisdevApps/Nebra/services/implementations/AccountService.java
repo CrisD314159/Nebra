@@ -45,6 +45,9 @@ public class AccountService implements IAccountService {
     @Override
     public void ChangePassword(ChangePasswordDTO changePasswordDTO) {
         User user = userService.FindValidUserByEmail(changePasswordDTO.email());
+
+        if(user.isThirdPartyUser()) throw new ValidationException("Use your Google account to log in");
+
         if(!jwtUtil.ValidateRecoverToken(changePasswordDTO.code(), user.getEmail()))
             throw new ValidationException("Code expired");
 
@@ -60,6 +63,8 @@ public class AccountService implements IAccountService {
     @Override
     public void SendRecoveryLink(String email) {
         User user = userService.FindValidUserByEmail(email);
+
+        if(user.isThirdPartyUser()) throw new ValidationException("Use you Google account to log in");
 
         String jwtToken = jwtUtil.GenerateToken(user.getId(), user.getEmail(), false, null, user.getUserRole());
 
